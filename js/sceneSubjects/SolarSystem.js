@@ -7,6 +7,12 @@ function SolarSystem(scene, time) {
     scene.add(solarSystem);
     var sunMesh = createSun("sun", 40, scene, solarSystem, astrionomicalBodies, loader);
 
+    // PARAMETERS EXPLAINED *********************************************************
+    //  
+    // var mercuryMesh = createPlanet("mercury", 3(DISTANCE FROM CENTER), 60(OBJECT SIZE), scene, mercuryOrbit, astrionomicalBodies, loader);
+
+
+    var mercuryMesh = createPlanet("mercury", 3, 60, scene, mercuryOrbit, astrionomicalBodies, loader);
 
     var mercuryOrbit = createOrbit(solarSystem);
     var mercuryMesh = createPlanet("mercury", 3, 60, scene, mercuryOrbit, astrionomicalBodies, loader);
