@@ -104,30 +104,33 @@ var galaxy,cinder_castle;
 // },function(error){
 //     console.log("error occ");
 // });
-
-let mixer= THREE.AnimationMixer;
-let modelReady = false
-const animationActions= THREE.AnimationAction 
-let activeAction= THREE.AnimationAction
-let lastAction= THREE.AnimationAction
+let abc;
+let mixer;
 
 loader2.load('/assets/glb/mew_-_flying.glb',function(glb){
-    
-    mixer = new THREE.AnimationMixer(glb.scene);
 
-        const animationAction = mixer.clipAction(animations[0])
-        animationActions.push(animationAction)
-        animationsFolder.add(animations, 'default')
-        activeAction = animationActions[0]
-    
     cinder_castle= glb.scene;
     // galaxy2.position.set(-140,-150,130);
     cinder_castle.scale.set(0.1,0.1,0.1);
     // galaxy2.scale.
    scene.add(cinder_castle);
+   abc = cinder_castle.children[0];
+   mixer = new THREE.AnimationMixer(abc);
+   mixer.clipAction(glb.animations[0]).play();
+   animate();
+
 },function(error){
     console.log("error occ");
 });
+function animate() {
+    requestAnimationFrame(animate);
+
+    const delta = clock.getDelta();
+    mixer.update(delta);
+
+    // abc.rotation.z += 0.005;
+    renderer.render(scene, camera);
+}
 
 
 const orbitMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff } );
@@ -164,7 +167,7 @@ const createPlanets = () => {
         scene.add(orbitGroup)
     })
 }
-
+const clock = new THREE.Clock();
 createPlanets();
 
 
