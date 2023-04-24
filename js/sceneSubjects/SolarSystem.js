@@ -11,9 +11,9 @@ function SolarSystem(scene, time) {
     //  
     // var mercuryMesh = createPlanet("mercury", 3(DISTANCE FROM CENTER), 60(OBJECT SIZE), scene, mercuryOrbit, astrionomicalBodies, loader);
 
-
-    var mercuryMesh = createPlanet("mercury", 3, 60, scene, mercuryOrbit, astrionomicalBodies, loader);
-
+    //FOR MY CUSTOM SCENES
+    const loader2 = new THREE.GLTFLoader();
+    
     var mercuryOrbit = createOrbit(solarSystem);
     var mercuryMesh = createPlanet("mercury", 3, 60, scene, mercuryOrbit, astrionomicalBodies, loader);
     createOrbitLine(60, scene, astrionomicalBodies);
@@ -42,6 +42,8 @@ function SolarSystem(scene, time) {
     var saturnMesh = createPlanet("saturn", 17, 320, scene, saturnOrbit, astrionomicalBodies, loader);
     createOrbitLine(320, scene, astrionomicalBodies);
 
+
+    
     // Saturns ring
     const innerRadius = 26;
     const outerRadius = 32;

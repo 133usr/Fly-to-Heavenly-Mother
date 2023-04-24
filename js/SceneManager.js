@@ -16,6 +16,8 @@ The SceneManager usually contains multiple SceneSubjects.
 */
 
 
+
+
 function SceneManager(canvas) {
 
     // scene setup

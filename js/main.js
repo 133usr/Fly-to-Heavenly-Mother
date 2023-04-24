@@ -7,7 +7,6 @@ the main has three basic responsibilities:
 */
 
 // run node server:  http-server --cors -o -c-1
-
 const canvas = document.querySelector('#canvas');
 const sceneManager = new SceneManager(canvas);
 
