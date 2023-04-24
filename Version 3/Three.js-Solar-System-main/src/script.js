@@ -1,12 +1,13 @@
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js'
 import gsap from 'gsap'
 import * as dat from 'dat.gui'
 import { Object3D } from 'three'
 
 /**
- * Base
+ * Base 
  */
 
 const planets = [
@@ -18,6 +19,7 @@ const planets = [
     {name: 'saturn', sizeRatio: 30/11.4, position: 50, rotation: 0.004},
     {name: 'uranus', sizeRatio: 30/26.8, position: 60, rotation: 0.006},
     {name: 'neptune', sizeRatio: 30/27.7, position: 70, rotation: 0.003},
+    // {name: 'galaxy', sizeRatio: 100/277, position: 75, rotation: 0.002},
 ]
 
 const orbitRadius = [15, 20, 25, 30, 40, 50, 60, 70]
@@ -68,7 +70,65 @@ const sun = new THREE.Mesh(
         }
     ));
 
-scene.background = textureLoader.load('/textures/stars.jpg')
+// scene.background = textureLoader.load('/textures/stars.jpg')
+
+/**
+ * AND HERE COMES THE GALAXY GLB
+ */
+
+//FOR MY CUSTOM SCENES
+var sphereTab = [];
+
+    for (var i = 0; i < 500; i++) {
+        // randRadius = Math.random()*30+10;
+       var lumiereS = new THREE.MeshPhongMaterial({
+            emissive: '#C278F4'
+        });
+        sphereTab.push(new THREE.Mesh(new THREE.SphereGeometry(Math.random() * 1, 20, 20), lumiereS));
+    }
+    
+    for (var i = 0; i < sphereTab.length; i++) {
+        sphereTab[i].position.set(Math.random() * 1200 - 500, Math.random() * 1200 - 500, Math.random() * 1200 - 500);
+        scene.add(sphereTab[i]);
+    }
+    
+    
+const loader2 = new GLTFLoader();
+var galaxy,cinder_castle;
+// loader2.load('/assets/glb/galaxy.glb',function(glb){
+    
+//     glb.scene.scale.set(100,100,100);
+//     glb.scene.position.set(-140,-150,130);
+//     galaxy= glb.scene;
+//    scene.add(galaxy);
+// },function(error){
+//     console.log("error occ");
+// });
+
+let mixer= THREE.AnimationMixer;
+let modelReady = false
+const animationActions= THREE.AnimationAction 
+let activeAction= THREE.AnimationAction
+let lastAction= THREE.AnimationAction
+
+loader2.load('/assets/glb/mew_-_flying.glb',function(glb){
+    
+    mixer = new THREE.AnimationMixer(glb.scene);
+
+        const animationAction = mixer.clipAction(animations[0])
+        animationActions.push(animationAction)
+        animationsFolder.add(animations, 'default')
+        activeAction = animationActions[0]
+    
+    cinder_castle= glb.scene;
+    // galaxy2.position.set(-140,-150,130);
+    cinder_castle.scale.set(0.1,0.1,0.1);
+    // galaxy2.scale.
+   scene.add(cinder_castle);
+},function(error){
+    console.log("error occ");
+});
+
 
 const orbitMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff } );
 
@@ -108,11 +168,11 @@ const createPlanets = () => {
 createPlanets();
 
 
-const ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light
+const ambientLight = new THREE.AmbientLight( '#fffefa' ); // soft white light
 
 const hemisphereLight = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
 
-scene.add(sun, ambientLight, hemisphereLight)
+scene.add( ambientLight, hemisphereLight)
 
 
 /**
@@ -142,7 +202,7 @@ window.addEventListener('resize', () =>
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(55, sizes.width / sizes.height, 0.1, 1000)
+const camera = new THREE.PerspectiveCamera(90, sizes.width / sizes.height, 1, 2000)
 scene.add(camera)
 // camera.position.y = 15
 // camera.position.z = 100
@@ -151,7 +211,9 @@ camera.position.set(0, 15, 100)
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
-controls.zoomSpeed = 0.5
+controls.zoomSpeed = 1.5
+// controls.minZoom = 200
+controls.maxDistance =1000
 
 /**
  * Renderer
@@ -163,7 +225,7 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(window.innerWidth, window.innerHeight)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-
+renderer.setClearColor(0x131A3D, 1);
 // const axesHelper = new THREE.AxesHelper(20);
 // scene.add(axesHelper)
 
@@ -195,8 +257,18 @@ gui.add(camera.position, 'x', -100, 150, 1)
 
 const tick = () =>
 {
+    var timer = 0.00001 * Date.now();
+    for (var i = 0, il = sphereTab.length; i < il; i++) {
+        var sfere = sphereTab[i];
+        sfere.position.x = 400 * Math.sin(timer + i);
+        // sfere.position.z= 500 * Math.sin( timer + i * 1.1 );
+        sfere.position.z = 400 * Math.sin(timer + i * 1.1);
+    }
 
-    sun.rotation.y += 0.001
+    // var axis = new THREE.Vector3(0, 1, 0).normalize();
+    // if (galaxy) sun.rotateOnAxis(axis,0.01)
+    if (cinder_castle)cinder_castle.rotation.y +=0.0001
+    // sun.rotation.y += 0.001
 
     orbitsObject3D.forEach((group, index) => {
         group.rotation.y += planets[index].rotation
