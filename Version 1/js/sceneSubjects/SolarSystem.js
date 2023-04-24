@@ -13,7 +13,21 @@ function SolarSystem(scene, time) {
 
     //FOR MY CUSTOM SCENES
     const loader2 = new THREE.GLTFLoader();
-    
+    loader2.load('assets/shane/galaxy.glb',function(glb){
+        console.log(glb);
+        glb.scene.scale.set(200,200,200);
+        const root= glb.scene;
+       scene.add(root);
+    },function (xhr){
+        console.log((xhr.loaded/xhr.total * 100)+"%loaded")
+    },function(error){
+        console.log("error occ");
+    })
+
+    // const light = new THREE.DirectionalLight(0xffffff,1);
+    // light.position.set(2,2,5);
+    // scene.add(light);
+
     var mercuryOrbit = createOrbit(solarSystem);
     var mercuryMesh = createPlanet("mercury", 3, 60, scene, mercuryOrbit, astrionomicalBodies, loader);
     createOrbitLine(60, scene, astrionomicalBodies);
@@ -78,6 +92,7 @@ function SolarSystem(scene, time) {
 
         venusOrbit.rotation.y = time * 0.07 + 1;
         venusMesh.rotation.y = time * 0.1;
+        
 
         earthOrbit.rotation.y = time * 0.06 - 0.5;
         earthMesh.rotation.y = time * 0.1;
