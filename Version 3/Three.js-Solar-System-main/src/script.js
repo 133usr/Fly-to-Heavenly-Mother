@@ -38,11 +38,26 @@ function onComplete(result){ // When the code completes, do this
   
 
   
-            for(i=1;i<12;i++){
+            for(i=1;i<2;i++){
                 meowurl[i]= '/assets/glb/low-size/low_model ('+i+').glb';
                     loader2.load(meowurl[i],function(glb){
                     meow [i]= glb.scene;
-                    meow[i].position.set(i,i,i);      
+                    meow[i].position.set(1,1,50); 
+                    meow[i].rotateY(90);   
+                    TweenMax.from( meow[i].position, 9, {
+                        y: -8,
+                        z: 500,
+                        yoyo: true,
+                        repeat: 0,
+                        ease: 'Power2.easeInOut'
+                      });  
+                      TweenMax.from( meow[i].position, 6, {
+                        y: -8,
+                        x: -2,
+                        yoyo: true,
+                        repeat: -1,
+                        ease: 'Power2.easeInOut'
+                      });
                     scene.add(meow[i]);
                     abc[i] = meow[i].children[0];
                     const mixer = new THREE.AnimationMixer(abc[i]);
@@ -52,8 +67,11 @@ function onComplete(result){ // When the code completes, do this
                 });  console.log(i)
             }
 
-   
+        //   var  str = JSON.stringify(meow[2]);
+        //     str = JSON.stringify(meow[2], null, 4); // (Optional) beautiful indented output.
+        //     console.log(str);
     console.log(result)
+
 }
 
 
@@ -254,7 +272,7 @@ const gui = new dat.GUI({
 
 const tick = () =>
 {
-
+   
     const delta = clock.getDelta();
     mixers.forEach(function(mixer) {
         mixer.update(delta);
@@ -274,9 +292,6 @@ const tick = () =>
     // var axis = new THREE.Vector3(0, 1, 0).normalize();
     // if (galaxy) sun.rotateOnAxis(axis,0.01)
 
-    // console.log(mixer_total)
-    // if (me)cinder_castle.rotation.y +=0.0001
-    // sun.rotation.y += 0.001
 
     orbitsObject3D.forEach((group, index) => {
         group.rotation.y += planets[index].rotation
