@@ -24,42 +24,53 @@ const gs_data2threejs = {
 
 var mixer_total;
 var loader2 = new GLTFLoader();
-let meow=[];
+let modelGlb=[];
 let abc=[];
 // let mixer;
 const mixers = [];
 function onComplete(result){ // When the code completes, do this
    gs_data2threejs.update_total_member = result
    mixer_total= result;
-    var meowurl = [];
+    let modelGlburl = [];
     
-//    meowurl[1] ='/assets/glb/mew_-_flying.glb';
    var i;
   
 
   
-            for(i=1;i<2;i++){
-                meowurl[i]= '/assets/glb/low-size/low_model ('+i+').glb';
-                    loader2.load(meowurl[i],function(glb){
-                    meow [i]= glb.scene;
-                    meow[i].position.set(1,1,50); 
-                    meow[i].rotateY(90);   
-                    TweenMax.from( meow[i].position, 9, {
+            for(i=5;i<6;i++){
+                modelGlburl[i]= '/assets/glb/low-size/model'+i+'.glb';
+                var str = modelGlburl[i];
+                    loader2.load(modelGlburl[i],function(glb){
+                    modelGlb [i]= glb.scene;
+                    modelGlb[i].position.set(1,1,1); 
+                    
+                    //planeFighter
+                    console.log(str);
+                    if( str.indexOf('1') >= 0) {modelGlb[i].rotateY(90); modelGlb[i].scale.set(0.2,0.2,0.2); console.log("set plane"); }
+                    //bird
+                    if( str.indexOf('3') >= 0) {modelGlb[i].rotateY(45); modelGlb[i].scale.set(0.5,0.5,0.5); console.log("set bird"); }
+                    //ww2 plane
+                    if( str.indexOf('4') >= 0) {modelGlb[i].rotateY(15);  console.log("set plane3"); }
+                     //ww2 plane
+                     if( str.indexOf('5') >= 0) {modelGlb[i].rotateY(10); modelGlb[i].scale.set(0.2,0.2,0.2); console.log("set plane3"); }
+
+                    TweenMax.from( modelGlb[i].position, 9, {
                         y: -8,
-                        z: 500,
+                        z: 20,
                         yoyo: true,
                         repeat: 0,
                         ease: 'Power2.easeInOut'
                       });  
-                      TweenMax.from( meow[i].position, 6, {
+                      TweenMax.from( modelGlb[i].position, 6, {
                         y: -8,
                         x: -2,
                         yoyo: true,
                         repeat: -1,
                         ease: 'Power2.easeInOut'
                       });
-                    scene.add(meow[i]);
-                    abc[i] = meow[i].children[0];
+                     
+                    scene.add(modelGlb[i]);
+                    abc[i] = modelGlb[i].children[0];
                     const mixer = new THREE.AnimationMixer(abc[i]);
                     mixer.clipAction(glb.animations[0]).play();
                     mixers.push(mixer);
@@ -67,8 +78,8 @@ function onComplete(result){ // When the code completes, do this
                 });  console.log(i)
             }
 
-        //   var  str = JSON.stringify(meow[2]);
-        //     str = JSON.stringify(meow[2], null, 4); // (Optional) beautiful indented output.
+        //   var  str = JSON.stringify(modelGlb[2]);
+        //     str = JSON.stringify(modelGlb[2], null, 4); // (Optional) beautiful indented output.
         //     console.log(str);
     console.log(result)
 
