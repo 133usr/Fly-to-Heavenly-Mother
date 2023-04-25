@@ -6,6 +6,62 @@ import gsap from 'gsap'
 import * as dat from 'dat.gui'
 import { Object3D } from 'three'
 
+
+
+/**
+ * GET DATA FROM GSHEETS FIRST
+ */
+const gs_data2threejs = {
+    totalMember: '1',
+
+    get getTotalMember() {
+        return this.totalMember;
+    },
+     set update_total_member(value) {
+        this.totalMember = value;
+    }
+}
+
+var mixer_total;
+var loader2 = new GLTFLoader();
+let meow=[];
+let abc=[];
+// let mixer;
+const mixers = [];
+function onComplete(result){ // When the code completes, do this
+   gs_data2threejs.update_total_member = result
+   mixer_total= result;
+    var meowurl = [];
+    
+//    meowurl[1] ='/assets/glb/mew_-_flying.glb';
+   var i;
+  
+
+  
+            for(i=1;i<12;i++){
+                meowurl[i]= '/assets/glb/low-size/low_model ('+i+').glb';
+                    loader2.load(meowurl[i],function(glb){
+                    meow [i]= glb.scene;
+                    meow[i].position.set(i,i,i);      
+                    scene.add(meow[i]);
+                    abc[i] = meow[i].children[0];
+                    const mixer = new THREE.AnimationMixer(abc[i]);
+                    mixer.clipAction(glb.animations[0]).play();
+                    mixers.push(mixer);
+                    console.log(i)
+                });  console.log(i)
+            }
+
+   
+    console.log(result)
+}
+
+
+
+
+
+
+
 /**
  * Base 
  */
@@ -62,21 +118,13 @@ scene.add(textMesh)
 textMesh.position.y = 20
 const textureLoader = new THREE.TextureLoader()
 
-const sun = new THREE.Mesh( 
-    new THREE.SphereGeometry( 10, 32, 32 ), 
-    new THREE.MeshStandardMaterial(
-        {
-            map: textureLoader.load('/textures/sun.jpg')
-        }
-    ));
-
 // scene.background = textureLoader.load('/textures/stars.jpg')
 
 /**
  * AND HERE COMES THE GALAXY GLB
  */
 
-//FOR MY CUSTOM SCENES
+//FOR floating stars
 var sphereTab = [];
 
     for (var i = 0; i < 500; i++) {
@@ -86,51 +134,12 @@ var sphereTab = [];
         });
         sphereTab.push(new THREE.Mesh(new THREE.SphereGeometry(Math.random() * 1, 20, 20), lumiereS));
     }
-    
     for (var i = 0; i < sphereTab.length; i++) {
         sphereTab[i].position.set(Math.random() * 1200 - 500, Math.random() * 1200 - 500, Math.random() * 1200 - 500);
         scene.add(sphereTab[i]);
     }
     
-    
-const loader2 = new GLTFLoader();
-var galaxy,cinder_castle;
-// loader2.load('/assets/glb/galaxy.glb',function(glb){
-    
-//     glb.scene.scale.set(100,100,100);
-//     glb.scene.position.set(-140,-150,130);
-//     galaxy= glb.scene;
-//    scene.add(galaxy);
-// },function(error){
-//     console.log("error occ");
-// });
-let abc;
-let mixer;
-
-loader2.load('/assets/glb/mew_-_flying.glb',function(glb){
-
-    cinder_castle= glb.scene;
-    // galaxy2.position.set(-140,-150,130);
-    cinder_castle.scale.set(0.1,0.1,0.1);
-    // galaxy2.scale.
-   scene.add(cinder_castle);
-   abc = cinder_castle.children[0];
-   mixer = new THREE.AnimationMixer(abc);
-   mixer.clipAction(glb.animations[0]).play();
-   animate();
-
-},function(error){
-    console.log("error occ");
-});
-function animate() {
-    requestAnimationFrame(animate);
-
-    const delta = clock.getDelta();
-    mixer.update(delta);
-
-    // abc.rotation.z += 0.005;
-    renderer.render(scene, camera);
-}
+   
 
 
 const orbitMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff } );
@@ -154,10 +163,10 @@ const createPlanets = () => {
 
         planetObject.position.x = planet.position
 
-        if(planet.name === 'saturn') {
-            saturnRing.position.x = planet.position
-            orbitGroup.add(saturnRing)
-        }
+        // if(planet.name === 'saturn') {
+        //     saturnRing.position.x = planet.position
+        //     orbitGroup.add(saturnRing)
+        // }
         orbitGroup.add(orbit, planetObject)
 
         orbit.rotateZ(Math.PI /2)
@@ -207,8 +216,6 @@ window.addEventListener('resize', () =>
 // Base camera
 const camera = new THREE.PerspectiveCamera(90, sizes.width / sizes.height, 1, 2000)
 scene.add(camera)
-// camera.position.y = 15
-// camera.position.z = 100
 camera.position.set(0, 15, 100)
 
 // Controls
@@ -239,20 +246,7 @@ const gui = new dat.GUI({
     closed: true,
     width: 400
 })
-// gui.hide()
-// gui.add(sun.position, 'y').min(- 3).max(3).step(0.01).name('elevation')
-gui.add(camera.position, 'z', -100, 150, 1)
-gui.add(camera.position, 'y', -100, 150, 1)
-gui.add(camera.position, 'x', -100, 150, 1)
 
-// gui
-//     .addColor(parameters, 'color')
-//     .onChange(() =>
-//     {
-//         material.color.set(parameters.color)
-//     })
-
-// gui.add(parameters, 'spin')
 
 /**
  * Animate
@@ -260,17 +254,28 @@ gui.add(camera.position, 'x', -100, 150, 1)
 
 const tick = () =>
 {
+
+    const delta = clock.getDelta();
+    mixers.forEach(function(mixer) {
+        mixer.update(delta);
+    });
+    // if ( mixer[1] ) mixer[1].update( delta );
+    // if ( mixer[2] ) mixer[2].update( delta );
+    // if ( mixer[0] ) mixer[0].update( delta );
+    // if ( mixer[3] ) mixer[3].update( delta );
+
     var timer = 0.00001 * Date.now();
     for (var i = 0, il = sphereTab.length; i < il; i++) {
         var sfere = sphereTab[i];
         sfere.position.x = 400 * Math.sin(timer + i);
-        // sfere.position.z= 500 * Math.sin( timer + i * 1.1 );
         sfere.position.z = 400 * Math.sin(timer + i * 1.1);
     }
 
     // var axis = new THREE.Vector3(0, 1, 0).normalize();
     // if (galaxy) sun.rotateOnAxis(axis,0.01)
-    if (cinder_castle)cinder_castle.rotation.y +=0.0001
+
+    // console.log(mixer_total)
+    // if (me)cinder_castle.rotation.y +=0.0001
     // sun.rotation.y += 0.001
 
     orbitsObject3D.forEach((group, index) => {
@@ -292,3 +297,28 @@ const tick = () =>
 }
 
 tick()
+
+loadData()
+function loadData (){
+    let result;
+    // ========================================================================================================================================================================================
+    let url ="https://docs.google.com/spreadsheets/d/e/2PACX-1vRe-NuXNEolTwg4iBlJtM4Lc7v8N-K8Be90s5mF0a0R6RUJP8NskA8PvxWMyAtOm_gjmaOoG_yA1w14/pub?gid=0&single=true&output=csv&range=a2"          
+    // let  url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR45xjRksAnj4s3bWcLyARSjUWp7hY7rYcATEPty0MHEPdMT6-2WH2In9bjldlgTHSkR2SQn5Jl8tCm/pub?gid=1203789969&single=true&output=csv&range=i2";     
+                  fetch(url) 
+                  .then(response => response.text())
+                  .then(text => { //what to do with result?
+              
+                   result = text; 
+                   onComplete(result);
+                //    setter(result);
+                // student.change_n_Member = result;
+                } 
+               
+                      //pass url value to variable
+                    ); 
+                    // return result;
+                    }
+                 
+
+                   
+                    
